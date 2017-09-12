@@ -6,3 +6,4 @@ int main() {
     load_bc();
     return 0;
 }
+
