@@ -28,5 +28,5 @@ java_lib:TestJni.h
 
 
 clean:
-	rm *.bc *.so *.a *.out
+	rm *.bc *.so *.a *.out *.class
 	
