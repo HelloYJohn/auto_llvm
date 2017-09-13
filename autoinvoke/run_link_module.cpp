@@ -33,7 +33,7 @@
 
 using namespace llvm;
 
-Module* makeLLVMModule();
+Module* makeLLVMModule(Module* mod);
 typedef int (*fnGetCalcResult)(int a, int b, void* dl_handle);
 typedef bool (*invoke)(const char* str, void* dl_handle);
 
@@ -57,13 +57,14 @@ int load_bc(const char* str)
     llvm_start_multithreaded();
     InitializeNativeTarget();
 
-    Module* main_mod = makeLLVMModule();
+    Module* main_mod = new Module("invoke.bc", getGlobalContext());
 
     LLVMContext context;
     SMDiagnostic error;
     Module* mod = ParseIRFile("load_cpp_bc.bc", error, context);
 
     std::string link_error_code = "";	
+    mod = makeLLVMModule(mod);
     Linker::LinkModules(main_mod , mod , 1 , &link_error_code) ;
 
     std::string error_code = "";
@@ -93,9 +94,8 @@ int load_bc(const char* str)
 }
 
 
-Module* makeLLVMModule() {
+Module* makeLLVMModule(Module* mod) {
     // Module Construction
-    Module* mod = new Module("invoke.bc", getGlobalContext());
     mod->setDataLayout("e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64-S128");
     mod->setTargetTriple("x86_64-unknown-linux-gnu");
 
@@ -112,16 +112,16 @@ Module* makeLLVMModule() {
 
     PointerType* PointerTy_2 = PointerType::get(PointerTy_1, 0);
 
-    std::vector<Type*>FuncTy_4_args;
-    FuncTy_4_args.push_back(IntegerType::get(mod->getContext(), 32));
-    FuncTy_4_args.push_back(IntegerType::get(mod->getContext(), 32));
-    FuncTy_4_args.push_back(PointerTy_1);
-    FunctionType* FuncTy_4 = FunctionType::get(
-            /*Result=*/IntegerType::get(mod->getContext(), 32),
-            /*Params=*/FuncTy_4_args,
-            /*isVarArg=*/false);
+    // std::vector<Type*>FuncTy_4_args;
+    // FuncTy_4_args.push_back(IntegerType::get(mod->getContext(), 32));
+    // FuncTy_4_args.push_back(IntegerType::get(mod->getContext(), 32));
+    // FuncTy_4_args.push_back(PointerTy_1);
+    // FunctionType* FuncTy_4 = FunctionType::get(
+    //         /*Result=*/IntegerType::get(mod->getContext(), 32),
+    //         /*Params=*/FuncTy_4_args,
+    //         /*isVarArg=*/false);
 
-    PointerType* PointerTy_3 = PointerType::get(FuncTy_4, 0);
+    // PointerType* PointerTy_3 = PointerType::get(FuncTy_4, 0);
 
 
     // Function Declarations
@@ -157,28 +157,29 @@ Module* makeLLVMModule() {
     }
     func_invoke->setAttributes(func_invoke_PAL);
 
-    Function* func_add = mod->getFunction("add");
-    if (!func_add) {
-        func_add = Function::Create(
-                /*Type=*/FuncTy_4,
-                /*Linkage=*/GlobalValue::ExternalLinkage,
-                /*Name=*/"add", mod); // (external, no body)
-        func_add->setCallingConv(CallingConv::C);
-    }
-    AttributeSet func_add_PAL;
-    {
-        SmallVector<AttributeSet, 4> Attrs;
-        AttributeSet PAS;
-        {
-            AttrBuilder B;
-            PAS = AttributeSet::get(mod->getContext(), ~0U, B);
-        }
+    // if (!func_add) {
+    //     std::cout << "add is empty!" << std::endl;
+    //     func_add = Function::Create(
+    //             /*Type=*/FuncTy_4,
+    //             /*Linkage=*/GlobalValue::ExternalLinkage,
+    //             /*Name=*/"add", mod); // (external, no body)
+    //     func_add->setCallingConv(CallingConv::C);
+    // }
+    // AttributeSet func_add_PAL;
+    // {
+    //     SmallVector<AttributeSet, 4> Attrs;
+    //     AttributeSet PAS;
+    //     {
+    //         AttrBuilder B;
+    //         PAS = AttributeSet::get(mod->getContext(), ~0U, B);
+    //     }
 
-        Attrs.push_back(PAS);
-        func_add_PAL = AttributeSet::get(mod->getContext(), Attrs);
+    //     Attrs.push_back(PAS);
+    //     func_add_PAL = AttributeSet::get(mod->getContext(), Attrs);
 
-    }
-    func_add->setAttributes(func_add_PAL);
+    // }
+    // func_add->setAttributes(func_add_PAL);
+    // func_add->addAttribute(llvm::AttributeSet::FunctionIndex, llvm::Attribute::AlwaysInline);
 
     // Global Variable Declarations
 
@@ -213,6 +214,7 @@ Module* makeLLVMModule() {
         void_9->setAlignment(8);
         LoadInst* ptr_10 = new LoadInst(ptr_handle_addr, "", false, label_entry);
         ptr_10->setAlignment(8);
+        Function* func_add = mod->getFunction("add");
         std::vector<Value*> int32_call_params;
         int32_call_params.push_back(const_int32_5);
         int32_call_params.push_back(const_int32_6);

@@ -24,9 +24,10 @@ java_lib:TestJni.h
 	/usr/java/jdk1.7.0_67-cloudera/bin/javah TestJni
 	/usr/java/jdk1.7.0_67-cloudera/bin/javac TestJni.java
 	/usr/java/jdk1.7.0_67-cloudera/bin/java -Djava.library.path='.' TestJni
+
+llvm_engine: llvm_engine.cpp
+	$(CXX) -O2 llvm_engine.cpp -D __STDC_LIMIT_MACROS -D __STDC_CONSTANT_MACROS `llvm-config --cxxflags --ldflags --libs`  -o $@
 .PHONY:clean
-
-
 clean:
 	rm *.bc *.so *.a *.out *.class
 	
