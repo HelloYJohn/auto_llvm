@@ -21,6 +21,7 @@ extern "C" {
         }
         printf("a = %d\n", a);
         printf("b = %d\n", b);
+        printf("deep_add = %d\n", deep_add(a, b));
         return deep_add(a, b);
     }
 

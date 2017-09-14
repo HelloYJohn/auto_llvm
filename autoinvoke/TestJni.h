@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     TestJni
  * Method:    invoke
- * Signature: (Ljava/lang/String;)V
+ * Signature: (JLjava/lang/Object;Ljava/util/List;)V
  */
 JNIEXPORT void JNICALL Java_TestJni_invoke
-  (JNIEnv *, jobject, jstring);
+  (JNIEnv *, jobject, jlong, jobject, jobject);
 
 #ifdef __cplusplus
 }

@@ -33,6 +33,7 @@
 #include <map>
 #include <utility>
 using namespace llvm;
+#define __FUNC_ID(x, y) ((((x) & 0xFFFFFFFFFFFFFFFF) << 32) | ((y) & 0xFFFFFFFFFFFFFFFF))
 enum LLVM_TYPE {
     LLVM_TYPE_BEGIN = -1,
     LLVM_CHAR,          /* char */
@@ -161,6 +162,29 @@ void  regSystemFunc(LLVM_FUNC_ID func_id, std::string func_type, std::string fun
     func_info.func_name = func_name;
     get_system_func_table()[func_id] = func_info;
 }
+struct MetaElem {
+    std::string m_funcName;
+    std::vector<std::string> m_paraTypeList;
+    std::string m_retType;
+    MetaElem(std::string funcName, std::vector<std::string>& paraTypeList, std::string ret_type) {
+        m_funcName = funcName;
+        m_paraTypeList = paraTypeList;
+        m_retType = ret_type;
+    }
+};
+
+std::map<int64_t, MetaElem>& createMetaMap() {
+   static std::map<int64_t, MetaElem> MetaMap; 
+   std::vector<std::string> ptl;
+   ptl.push_back("int");
+   ptl.push_back("int");
+   ptl.push_back("void*");
+   MetaElem me(std::string("add"), ptl, std::string("int"));
+   int64_t funcId = __FUNC_ID(1, 1);
+   MetaMap.insert(std::make_pair(funcId,me)); 
+   return MetaMap;
+}
+
 
 int main() {
     regLoadBuildinType();
@@ -170,6 +194,16 @@ int main() {
         for (std::vector<LLVM_TYPE>::iterator it =  get_system_func_table()[funid].func_type_vec.begin(); it != get_system_func_table()[funid].func_type_vec.end(); ++it) {
             std::cout << static_cast<LLVM_TYPE>(*it) << std::endl;
         }
+    }
+    std::map<int64_t, MetaElem>& mm = createMetaMap();
+    for (std::map<int64_t, MetaElem>::iterator it = mm.begin(); it != mm.end(); ++it) {
+        std::cout << "it->first: " << it->first << std::endl;
+        std::cout << "it->second: " << std::endl;
+        std::cout << it->second.m_funcName << std::endl;
+        for (std::vector<std::string>::iterator pit = it->second.m_paraTypeList.begin(); pit != it->second.m_paraTypeList.end(); ++ pit) {
+            std::cout << *pit << std::endl;
+        }
+        std::cout << it->second.m_retType << std::endl;
     }
     return 0;
 }
