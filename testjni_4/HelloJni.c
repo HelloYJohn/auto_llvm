@@ -1,14 +1,11 @@
 #include "HelloJni.h"  
+#include <iostream>
 #include <sstream>
 int i=1;  
 jobject user;  
 JNIEXPORT jint JNICALL Java_HelloJni_get  
 (JNIEnv *env, jobject jthiz){  
     printf("HelloWorld\n");  
-}  
-JNIEXPORT void JNICALL Java_HelloJni_set  
-(JNIEnv *env, jobject jthiz, jint ji){  
-    i = ji+1;  
 }  
 JNIEXPORT void JNICALL Java_HelloJni_setUser__Ljava_lang_String_2
 (JNIEnv *env, jobject jthiz, jstring name){  
@@ -72,30 +69,69 @@ JNIEXPORT void JNICALL Java_HelloJni_setUserList
 
         //get field id  
         /*
-        jfieldID user_id = env->GetFieldID(cls_user,"id","J");  
-        jfieldID user_name = env->GetFieldID(cls_user,"userName","Ljava/lang/String;");  
-        jfieldID username_isMan = env->GetFieldID(cls_user,"isMan","Z");  
-        jfieldID user_age = env->GetFieldID(cls_user,"age","I");  
-        env->SetLongField(obj_user,user_id,i);  
-        std::stringstream ss;
-        ss << "john_" << i;
-        env->SetObjectField(obj_user,user_name,env->NewStringUTF(ss.str().c_str()));  
-        env->SetBooleanField(obj_user,username_isMan,1);  
-        env->SetIntField(obj_user,user_age,24 + i);  
-        */
-       jmethodID user_setId = env->GetMethodID(cls_user,"setId","(J)V"); 
-       jmethodID user_setUserName = env->GetMethodID(cls_user,"setUserName","(Ljava/lang/String;)V"); 
-       jmethodID user_setMan = env->GetMethodID(cls_user,"setMan","(Z)V"); 
-       jmethodID user_setAge = env->GetMethodID(cls_user,"setAge","(I)V"); 
+           jfieldID user_id = env->GetFieldID(cls_user,"id","J");  
+           jfieldID user_name = env->GetFieldID(cls_user,"userName","Ljava/lang/String;");  
+           jfieldID username_isMan = env->GetFieldID(cls_user,"isMan","Z");  
+           jfieldID user_age = env->GetFieldID(cls_user,"age","I");  
+           env->SetLongField(obj_user,user_id,i);  
+           std::stringstream ss;
+           ss << "john_" << i;
+           env->SetObjectField(obj_user,user_name,env->NewStringUTF(ss.str().c_str()));  
+           env->SetBooleanField(obj_user,username_isMan,1);  
+           env->SetIntField(obj_user,user_age,24 + i);  
+           */
+        jmethodID user_setId = env->GetMethodID(cls_user,"setId","(J)V"); 
+        jmethodID user_setUserName = env->GetMethodID(cls_user,"setUserName","(Ljava/lang/String;)V"); 
+        jmethodID user_setMan = env->GetMethodID(cls_user,"setMan","(Z)V"); 
+        jmethodID user_setAge = env->GetMethodID(cls_user,"setAge","(I)V"); 
 
-       env->CallVoidMethod(obj_user,user_setId, i); 
-       std::stringstream ss;
-       ss << "John_" << i;
-       env->CallVoidMethod(obj_user,user_setUserName, env->NewStringUTF(ss.str().c_str()));
-       env->CallVoidMethod(obj_user,user_setMan, 1); 
-       env->CallVoidMethod(obj_user,user_setAge, 24 + i);
+        env->CallVoidMethod(obj_user,user_setId, i); 
+        std::stringstream ss;
+        ss << "John_" << i;
+        env->CallVoidMethod(obj_user,user_setUserName, env->NewStringUTF(ss.str().c_str()));
+        env->CallVoidMethod(obj_user,user_setMan, 1); 
+        env->CallVoidMethod(obj_user,user_setAge, 24 + i);
     }
 }  
+JNIEXPORT void JNICALL Java_HelloJni_set  
+(JNIEnv *jenv, jobject obj, jobject data) {
+/*
+    jclass peerCls = jenv->GetObjectClass(data);
+
+    jmethodID mGetValue = jenv->GetMethodID(peerCls, "getValue","()Ljava/lang/Integer;");
+    if (mGetValue == NULL){
+        std::cout << "mGetValue is NULL" << std::endl;
+        return;
+    }
+
+    jobject value = jenv->CallObjectMethod(data, mGetValue);
+    if(value == NULL){
+        std::cout<<"jobject value = NULL"<<std::endl;
+        return;
+    }
+
+    //getValue()
+
+    jclass cls = jenv->FindClass("java/lang/Integer");
+    if(cls == NULL){
+        std::cout <<"cannot find FindClass(java/lang/Integer)"<<std::endl;
+        return;
+    }
+
+    jmethodID getVal = jenv->GetMethodID(cls, "intValue", "()I");
+    if(getVal == NULL){
+        std::cout <<"Couldnot find Int getValue()"<< std::endl;
+        return;
+    }
+    int i = jenv->CallIntMethod(value, getVal);
+    std::cout << i << std::endl;
+    */
+    jclass peerCls = jenv->GetObjectClass(data);
+    jmethodID getVal = jenv->GetMethodID(peerCls, "intValue", "()I");
+    jint value = jenv->CallIntMethod(data, getVal);
+    std::cout << value << std::endl;
+}
+
 JNIEXPORT jobject JNICALL Java_HelloJni_getUserList  
 (JNIEnv *env, jobject jthiz){  
     //ArrayList Object  

@@ -18,10 +18,10 @@ JNIEXPORT jint JNICALL Java_HelloJni_get
 /*
  * Class:     HelloJni
  * Method:    set
- * Signature: (I)V
+ * Signature: (Ljava/lang/Object;)V
  */
 JNIEXPORT void JNICALL Java_HelloJni_set
-  (JNIEnv *, jobject, jint);
+  (JNIEnv *, jobject, jobject);
 
 /*
  * Class:     HelloJni
