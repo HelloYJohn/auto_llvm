@@ -22,7 +22,6 @@ std::map<int64_t, MetaElem>& createMetaMap() {
    std::vector<std::string> ptl;
    ptl.push_back("int");
    ptl.push_back("int");
-   ptl.push_back("void*");
    MetaElem me(std::string("add"), ptl, std::string("int"));
    int64_t funcId = __FUNC_ID(1, 1);
    MetaMap.insert(std::make_pair(funcId,me)); 

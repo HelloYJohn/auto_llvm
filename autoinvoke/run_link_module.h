@@ -41,18 +41,34 @@ struct PFDSType {
         pfdsType = pfdsT;
         pfdsValue = pfdsV;
     }
+    ~PFDSType() {
+        if (pfdsValue != NULL) {
+            if (pfdsType == "int") {
+                printf("delete (int*)pfdsValue: %d\n", *(int*)pfdsValue);
+                //delete ((int*)pfdsValue);
+            }
+        }
+    }
 };
+
 
 struct FuncType {
-    int64_t funcId;
+    std::string funcName;
     std::vector<PFDSType>* paraList;
     PFDSType *ret;
-    FuncType():funcId(0), paraList(NULL), ret(NULL) {
+    FuncType():funcName(""), paraList(NULL), ret(NULL) {
     }
-    FuncType(int64_t fid, std::vector<PFDSType>* pl, PFDSType* r):funcId(fid), paraList(pl), ret(r) {
+    FuncType(std::string fn, std::vector<PFDSType>* pl, PFDSType* r):funcName(fn), paraList(pl), ret(r) {
     }
 };
 
+struct JniStatus {
+    std::string m_errorMsg;
+    int m_errorCode;
+    bool m_hasWrong;
+    JniStatus():m_errorCode(0), m_hasWrong(false), m_errorMsg("NULL") {
+    }
+};
 
 class MiniLlvmEngine {
     private:
@@ -67,8 +83,8 @@ class MiniLlvmEngine {
             m_ee = NULL;
             m_so = NULL;
         }
-        void init();
-        void execute(FuncType& funcType);
+        void init(FuncType& funcType);
+        void execute(FuncType& funcType, JniStatus status);
         ~MiniLlvmEngine() {
             if (m_ee != NULL) {
                 delete m_ee;

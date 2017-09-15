@@ -16,9 +16,45 @@ class IntegerValue {
     }
 }
 
+class JniStatus {
+    private boolean m_hasWrong;
+    private int m_errorCode;
+    private String m_errorMsg;
+
+    public JniStatus() {
+        m_hasWrong = false;
+        m_errorCode = 0;
+        m_errorMsg = "NULL";
+    }
+    public boolean getM_hasWrong() {
+        return m_hasWrong;
+    }
+
+    public void setM_hasWrong(boolean hasWrong) {
+        m_hasWrong = hasWrong;
+    }
+
+    public int getM_errorCode() {
+        return m_errorCode;
+    }
+
+    public void setM_errorCode(int errorCode) {
+        m_errorCode = errorCode;
+    }
+
+    public String getM_errorMsg() {
+        return m_errorMsg;
+    }
+
+    public void setM_errorMsg(String errorMsg) {
+        m_errorMsg = errorMsg;
+    }
+}
+
+
 public class TestJni {
     TestJni() { }
-    public native void invoke(long funcId, Object ret, List<Object> paraList);
+    public native void invoke(long funcId, Object ret, List<Object> paraList, JniStatus status);
     public static void main(String[] args) {
         System.loadLibrary("run_link_module");
         TestJni testjni = new TestJni();
@@ -26,8 +62,13 @@ public class TestJni {
         List<Object> add_paraList = new ArrayList<Object>();
         add_paraList.add((Object)new IntegerValue(1));
         add_paraList.add((Object)new IntegerValue(2));
-        testjni.invoke(4294967297L, add_ret, add_paraList);
-        System.out.println("jni: " + ((IntegerValue)add_ret).getValue());
+        JniStatus status = new JniStatus();
+        testjni.invoke(4294967297L, add_ret, add_paraList, status);
+        if (status.getM_hasWrong()) {
+            System.out.println("jni invoke error: " + status.getM_errorCode() + " " + status.getM_errorMsg());
+        } else {
+            System.out.println("jni: " + ((IntegerValue)add_ret).getValue());
+        }
     }
 }
 
