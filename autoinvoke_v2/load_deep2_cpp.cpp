@@ -49,6 +49,3 @@ int A::add(int arg) {
     return m_par1 + m_par2 + arg;
 }
 
-int A::sub() {
-    return m_par1 - m_par2;
-}

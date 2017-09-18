@@ -30,55 +30,29 @@
 #include <llvm/Linker.h>
 #include <dlfcn.h>
 #include <stdio.h>
-#include <iostream>
 struct PFDSType {
     std::string pfdsType;
     void* pfdsValue;
     PFDSType() {
-        std::cout << __FILE__ << " PFDSType()" << std::endl;
         pfdsType = "NULL";
         pfdsValue = NULL;
     }
     PFDSType(std::string pfdsT, void* pfdsV) {
-        std::cout << __FILE__ << " PFDSType(std::string pfdsT, void* pfdsV)" << std::endl;
         pfdsType = pfdsT;
         pfdsValue = pfdsV;
     }
-    ~PFDSType() {
-        if (pfdsValue != NULL) {
-            if (pfdsType == "int") {
-                printf("delete (int*)pfdsValue: %d\n", *(int*)pfdsValue);
-                //delete ((int*)pfdsValue);
-            }
-        }
-    }
 };
-
 
 struct FuncType {
     std::string funcName;
-    std::vector<PFDSType>* paraList;
+    std::vector<PFDSType*> paraList;
     PFDSType *ret;
-    FuncType():funcName(""), paraList(NULL), ret(NULL) {
-        std::cout << __FILE__ << " FuncType()" << std::endl;
+    FuncType():funcName(""), ret(NULL) {
     }
-    FuncType(std::string fn, std::vector<PFDSType>* pl, PFDSType* r):funcName(fn), paraList(pl), ret(r) {
-        std::cout << __FILE__ << " FuncType(std::string fn, std::vector<PFDSType>* pl, PFDSType* r)" << std::endl;
-    }
-    ~FuncType() {
-        std::cout << __FILE__ << " ~FuncType()" << std::endl;
-    }
-};
-
-struct JniStatus {
-    std::string m_errorMsg;
-    int m_errorCode;
-    bool m_hasWrong;
-    JniStatus():m_errorCode(0), m_hasWrong(false), m_errorMsg("NULL") {
-        std::cout << __FILE__ << " JniStatus()"<< std::endl;
-    }
-    ~JniStatus() {
-        std::cout << __FILE__ << " ~JniStatus()"<< std::endl;
+    FuncType(std::string& fn, std::vector<PFDSType*>& pl, PFDSType* r):funcName(fn), ret(r) {
+        for(std::vector<PFDSType*>::iterator it = pl.begin(); it != pl.end(); ++it) {
+            paraList.push_back(*it);
+        }
     }
 };
 
@@ -96,7 +70,7 @@ class MiniLlvmEngine {
             m_so = NULL;
         }
         void init(FuncType& funcType);
-        void execute(FuncType& funcType, JniStatus status);
+        void execute(FuncType& funcType);
         ~MiniLlvmEngine() {
             if (m_ee != NULL) {
                 delete m_ee;

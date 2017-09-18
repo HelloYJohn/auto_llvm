@@ -6,10 +6,5 @@ extern "C" {
         A aa(a, b);
         return aa.add();
     }
-    
-    int deep_sub(int a, int b) {
-        A aa(a, b);
-        return aa.sub();
-    }
 
 }

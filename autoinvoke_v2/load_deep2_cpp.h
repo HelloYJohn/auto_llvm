@@ -31,7 +31,6 @@ public:
     }
 
     int add();
-    int sub();
     int add(int arg);
     ~A() {
     }

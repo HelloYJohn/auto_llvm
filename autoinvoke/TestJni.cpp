@@ -14,12 +14,37 @@ void write_para(JNIEnv* env, jclass cls_para, jobject obj_para, std::string para
     if (paraType == "int") {
         jmethodID obj_getValue = env->GetMethodID(cls_para,"getValue","()I");
         jint value = env->CallIntMethod(obj_para, obj_getValue);
-        // std::cout << "value: " << value << std::endl;
+        std::cout << "value: " << value << std::endl;
         int* tmp = new int(value);
         PFDSType pfdsType(paraType, (void*)tmp);
         pfdsTypeList.push_back(pfdsType);
     }
 }
+void* createVoid(std::string type) {
+    void* Value = NULL;
+    if (type == "int") {
+        Value = reinterpret_cast<void*>(new int());
+    } else if (type == "int64_t") {
+        Value = reinterpret_cast<void*>(new long());
+    } else if (type == "double") {
+        Value = reinterpret_cast<void*>(new double());
+    } else {
+        std::cout << "no support" << std::endl;
+        return NULL;
+    }
+    return Value;
+}
+
+FuncType* createFuncType(Metadata& me) {
+    PFDSType* retPFDSType = new PFDSType(me.m_retType, createVoid(me.retType)); 
+    std::vector<PFDSType>* paraListPFDSType = new std::vecor<PFDSType>();
+    for(int i = 0; i < me.m_paraTypeList.size(); ++i) {
+        PFDSType* paraPFDSType = new PFDSType(me.m_paraTypeList[i].pfdsType, createVoid(me.m_paraTypeList[i].pfdsType)); 
+        paraListPFDSType.pust_back(*paraPFDSType);
+    }
+    FuncType* funcType = new FuncType(me.m_funcName, paraListPFDSType, retPFDSType);
+}
+
 JNIEXPORT void JNICALL Java_TestJni_invoke
 (JNIEnv *env, jobject obj, jlong jl, jobject jret, jobject jparaList, jobject jstatus) {
     MiniLlvmEngine mle;
@@ -90,6 +115,8 @@ JNIEXPORT void JNICALL Java_TestJni_invoke
         env->CallVoidMethod(jstatus, setErrorCode, status.m_errorCode);
         jmethodID setErrorMsg = env->GetMethodID(statusCls, "setM_errorMsg", "(Ljava/lang/String;)V");
         env->CallVoidMethod(jstatus, setErrorMsg, env->NewStringUTF(status.m_errorMsg.c_str()));
+    } else {
+        std::cout << "no find " << jl << " in Metadata" << std::endl;
     }
 
     //std::cout << "me.m_retType: " << me.m_retType << std::endl;

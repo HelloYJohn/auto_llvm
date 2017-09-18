@@ -10,7 +10,6 @@ extern "C" {
        */
 
     typedef int(*deep_add_func)(int, int);
-    typedef int(*deep_sub_func)(int, int);
     int add(int a , int b, void* dl_handle)
     {
         // deep_add_func deep_add = reinterpret_cast<deep_add_func>(dlsym(dl_handle, "deep_add"));
@@ -26,19 +25,5 @@ extern "C" {
         return deep_add(a, b);
     }
 
-    int sub(int a , int b, void* dl_handle)
-    {
-        // deep_add_func deep_add = reinterpret_cast<deep_add_func>(dlsym(dl_handle, "deep_add"));
-        deep_sub_func deep_sub = (deep_sub_func)(dlsym(dl_handle, "deep_sub"));
-        char *error = dlerror();
-        if (error != NULL) {
-            printf( "!!! %s\n", error );
-            return 0;
-        }
-        printf("a = %d\n", a);
-        printf("b = %d\n", b);
-        printf("deep_sub = %d\n", deep_sub(a, b));
-        return deep_sub(a, b);
-    }
 
 }

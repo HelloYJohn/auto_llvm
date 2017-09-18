@@ -22,14 +22,9 @@ std::map<int64_t, MetaElem>& createMetaMap() {
    std::vector<std::string> ptl;
    ptl.push_back("int");
    ptl.push_back("int");
+   ptl.push_back("void*");
    MetaElem me(std::string("add"), ptl, std::string("int"));
    int64_t funcId = __FUNC_ID(1, 1);
    MetaMap.insert(std::make_pair(funcId,me)); 
-   std::vector<std::string> ptlsub;
-   ptlsub.push_back("int");
-   ptlsub.push_back("int");
-   MetaElem mesub(std::string("sub"), ptlsub, std::string("int"));
-   int64_t funcsubId = __FUNC_ID(2, 1);
-   MetaMap.insert(std::make_pair(funcsubId,mesub)); 
    return MetaMap;
 }

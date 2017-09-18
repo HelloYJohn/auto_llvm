@@ -524,16 +524,6 @@ Module* makeLLVMModule(Module* mod, FuncType& funcType) {
         ptr_33->setAlignment(8);
         StoreInst* void_34 = new StoreInst(ptr_33, ptr_ret, false, label_entry);
         void_34->setAlignment(8);
-        /*
-        // get PFDSType struct function
-        Value* ptr_call =  getPFDSTypeFromVector(mod, label_entry, ptr_paraList, const_int64_0);
-        // get pfds_value from PFDSType
-        Value* int32_38 = getPfdsValueFromPFDSType(mod, label_entry, ptr_call);
-        // get PFDSType struct function
-        Value* ptr_call4 =  getPFDSTypeFromVector(mod, label_entry, ptr_paraList, const_int64_1);
-        // get pfds_value from PFDSType
-        Value* int32_43 = getPfdsValueFromPFDSType(mod, label_entry, ptr_call4);
-        */
 
         Function* func_add = mod->getFunction(funcType.funcName.c_str());
         LoadInst* ptr_47 = new LoadInst(ptr_dl_handle_addr, "", false, label_entry);
